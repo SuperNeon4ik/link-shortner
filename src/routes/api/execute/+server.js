@@ -1,4 +1,4 @@
-import { validateTarget } from '$lib';
+import { validateUrl } from '$lib';
 import { generateTarget } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
 
@@ -6,7 +6,7 @@ import { error } from '@sveltejs/kit';
 export async function POST({ request }) {
     const target = await request.text();
     
-    if (!target || !validateTarget(target)) {
+    if (!target || !validateUrl(target)) {
         error(422, {
             message: "Unprocessable Content"
         });
