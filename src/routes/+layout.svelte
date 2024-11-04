@@ -14,8 +14,8 @@
     <footer>
         <span>By <a href='https://superneon4ik.me' target="_blank">SuperNeon4ik</a></span>
         <br>
-        {#if data.git_url && data.cf_branch && data.cf_commit_sha}
-            <span>{data.cf_branch}@<a href='{data.git_url}/commit/{data.cf_commit_sha}'>{data.cf_commit_sha.substring(0, 7)}</a></span>
+        {#if data.git_url && data.branch && data.commit_sha}
+            <span>{data.branch}@<a href='{data.git_url}/commit/{data.commit_sha}'>{data.commit_sha.substring(0, 7)}</a></span>
             <br>
         {/if}
         <span><a href='mailto:personal@superneon4ik.me' target="_blank">Report abuse</a></span>
