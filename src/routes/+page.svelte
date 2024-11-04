@@ -1,6 +1,8 @@
 <script>
     import { validateUrl } from '$lib';
 
+    export let data;
+
     let urlInput;
     let urlOutput;
 
@@ -11,7 +13,32 @@
     }
 
     function onSubmit() {
-        console.log(urlInput.value, validateUrl(urlInput.value))
+        if (!validateUrl(urlInput.value)) {
+            return;
+        }
+
+        fetch('/api/execute', {
+            method: "POST",
+            body: urlInput.value
+        })
+        .then(async (response) => {
+            if (response.error) {
+                console.error(response.error);
+                return;
+            }
+
+            const code = await response.text();
+            urlOutput.innerText = code;
+
+            try {
+                await navigator.clipboard.writeText('https://' + data.domain + "/" + code);
+            } catch (err) {
+                console.error('Failed to copy: ', err);
+            }
+        })
+        .catch(error => {
+            console.error(error);
+        })
     }
 </script>
 
@@ -29,7 +56,7 @@
         <button 
             class='output lexend-bold' 
             on:click={() => onSubmit()}>
-            <span>l.superneon4ik.me/</span>
+            <span>{data.domain}/</span>
             <span bind:this={urlOutput}>######</span>
         </button>
     </section>

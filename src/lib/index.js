@@ -3,11 +3,13 @@
 // - needs to be http: or https:
 // - can't be the "l.superneon4ik.me" domain
 export function validateUrl(url) {
-    // Define a regular expression pattern for the URL validation
-    const urlPattern = /^(https?:\/\/)(?!l\.superneon4ik\.me)([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/;
+    const pattern = /^(https?:\/\/)(?!l\.superneon4ik\.me)([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/;
+    return pattern.test(url);
+}
 
-    // Test the URL against the pattern
-    return urlPattern.test(url);
+export function validateCode(code) {
+    const pattern = /^[A-Z0-9]{6}$/;
+    return pattern.test(code);
 }
 
 // Test cases
