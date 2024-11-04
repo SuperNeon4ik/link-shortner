@@ -1,3 +1,7 @@
+<script>
+    export let data;
+</script>
+
 <svelte:head>
     <title>Neon's link shortner</title>
 </svelte:head>
@@ -8,9 +12,13 @@
     <slot />
 
     <footer>
-        © 2024 <a href='https://superneon4ik.me' target="_blank">SuperNeon4ik</a>
+        <span>By <a href='https://superneon4ik.me' target="_blank">SuperNeon4ik</a></span>
         <br>
-        <a href='mailto:personal@superneon4ik.me' target="_blank">Report abuse</a>
+        {#if data.git_url && data.cf_branch && data.cf_commit_sha}
+            <span>{data.cf_branch}@<a href='{data.git_url}/commit/{data.cf_commit_sha}'>{data.cf_commit_sha.substring(0, 7)}</a></span>
+            <br>
+        {/if}
+        <span><a href='mailto:personal@superneon4ik.me' target="_blank">Report abuse</a></span>
     </footer>
 </main>
 
