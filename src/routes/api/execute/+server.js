@@ -1,10 +1,16 @@
+import { validateTarget } from '$lib';
 import { generateTarget } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
 
 /** @type {import('./$types').RequestHandler} */
 export async function POST({ request }) {
     const target = await request.text();
-    console.log(target);
+    
+    if (!target || !validateTarget(target)) {
+        error(422, {
+            message: "Unprocessable Content"
+        });
+    }
 
     var codeResponse = await generateTarget(target);
     if (codeResponse.error) {
