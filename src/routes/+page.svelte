@@ -28,9 +28,9 @@
 
         <button 
             class='output lexend-bold' 
-            bind:this={urlOutput} 
             on:click={() => onSubmit()}>
-            l.superneon4ik.me/######
+            <span>l.superneon4ik.me/</span>
+            <span bind:this={urlOutput}>######</span>
         </button>
     </section>
 </main>
@@ -45,9 +45,9 @@
     }
 
     section {
-        width: 100%;
         max-width: 35rem;
-        margin: 0 3rem;
+        width: 90%;
+        text-wrap: wrap;
         
         border: #dadaee69 2px solid;
         border-radius: 0.5rem;
@@ -101,6 +101,8 @@
         border: none;
         outline: none;
         color: #dadaee;
+
+        text-wrap: wrap;
     }
 
     .output {

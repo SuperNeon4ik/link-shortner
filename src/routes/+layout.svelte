@@ -21,6 +21,12 @@
         height: 100vh;
     }
 
+    @supports (height: 100dvh) {
+        main {
+            height: 100dvh;
+        }
+    }
+
     #title {
         text-transform: uppercase;
         text-align: center;
