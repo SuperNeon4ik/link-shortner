@@ -76,7 +76,7 @@
             class='output lexend-bold' 
             on:click={() => onSubmit()}>
             <span>{data.domain}/</span>
-            <div class="processing-box" class:active={isProcessing}></div>
+            <div class="processing-box" class:active={isProcessing}>######</div>
             <span bind:this={urlOutput} class='output-code' class:active={!isProcessing}>######</span>
         </button>
     </form>
@@ -155,11 +155,14 @@
     .output {
         display: flex;
         flex-direction: row;
+        flex-wrap: wrap;
         font-size: x-large;
+        justify-content: center;
     }
 
     .output-code {
         display: none;
+        margin-left: 5px;
     }
 
     .output-code.active {
@@ -170,10 +173,10 @@
         display: none;
         position: relative;
 
-        width: 5rem;
-        margin: 2px 5px;
+        margin-left: 5px;
+        color: transparent;
 
-        background: #dadaee80;
+        background: #dadaee69;
         border-radius: 5px;
     }
 
@@ -188,6 +191,8 @@
         bottom: 0;
         left: 0;
         right: 0;
+        width: 100%;
+        height: 100%;
         background: linear-gradient(to right, transparent 0%, transparent 30%, #dadaeeba 50%, transparent 70%, transparent 100%);
         background-size: 400% 400%;
         border-radius: 5px;
