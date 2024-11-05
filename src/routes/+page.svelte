@@ -6,6 +6,8 @@
     let urlInput;
     let urlOutput;
 
+    let isProcessing = false;
+
     function onInput() {
         if (urlInput.value.length == 1) {
             urlInput.value = "https://" + urlInput.value;
@@ -16,6 +18,8 @@
         if (!validateUrl(urlInput.value)) {
             return;
         }
+
+        isProcessing = true;
 
         fetch('/api/execute', {
             method: "POST",
@@ -30,20 +34,35 @@
             const code = await response.text();
             urlOutput.innerText = code;
 
-            try {
-                await navigator.clipboard.writeText('https://' + data.domain + "/" + code);
-            } catch (err) {
-                console.error('Failed to copy: ', err);
-            }
+            const url = 'https://' + data.domain + "/" + code;
+            await copyToClipboard(url);
         })
         .catch(error => {
             console.error(error);
         })
+        .finally(() => {
+            isProcessing = false;
+        })
+    }
+
+    async function copyToClipboard(value) {
+        try {
+            await navigator.clipboard.writeText(value);
+        } catch (err) {
+            console.error('Failed to copy: ', err);
+
+            const temp = document.createElement('input');
+            document.body.appendChild(temp);
+            temp.value = value;
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+        }
     }
 </script>
 
 <main>
-    <section>
+    <form on:submit|preventDefault={() => onSubmit()}>
         <div class='inp-wrapper'>
             <input 
                 type='url' 
@@ -57,9 +76,10 @@
             class='output lexend-bold' 
             on:click={() => onSubmit()}>
             <span>{data.domain}/</span>
-            <span bind:this={urlOutput}>######</span>
+            <div class="processing-box" class:active={isProcessing}></div>
+            <span bind:this={urlOutput} class='output-code' class:active={!isProcessing}>######</span>
         </button>
-    </section>
+    </form>
 </main>
 
 <style>
@@ -71,7 +91,7 @@
         height: 100%;
     }
 
-    section {
+    form {
         max-width: 35rem;
         width: 90%;
         text-wrap: wrap;
@@ -81,7 +101,7 @@
         padding: 1rem 1.5rem;
     }
 
-    section > * {
+    form > * {
         width: 100%;
     }
 
@@ -133,6 +153,53 @@
     }
 
     .output {
+        display: flex;
+        flex-direction: row;
         font-size: x-large;
+    }
+
+    .output-code {
+        display: none;
+    }
+
+    .output-code.active {
+        display: block;
+    }
+
+    .processing-box {
+        display: none;
+        position: relative;
+
+        width: 5rem;
+        margin: 2px 5px;
+
+        background: #dadaee80;
+        border-radius: 5px;
+    }
+
+    .processing-box.active {
+        display: block;
+    }
+
+    .processing-box::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to right, transparent 0%, transparent 30%, #dadaeeba 50%, transparent 70%, transparent 100%);
+        background-size: 400% 400%;
+        border-radius: 5px;
+        animation: 1.25s processing-anim infinite running ease-in-out;
+    }
+
+    @keyframes processing-anim {
+        0% {
+		    background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
     }
 </style>
