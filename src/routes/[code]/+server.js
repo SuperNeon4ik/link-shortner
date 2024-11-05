@@ -7,8 +7,9 @@ export async function GET({ params }) {
     if (!validateCode(params.code)) error(401);
     const target = await getTarget(params.code);
     if (target.error) {
+        console.error(target.error);
         error(404, {
-            message: target.error
+            message: 'Not found'
         });
     }
 

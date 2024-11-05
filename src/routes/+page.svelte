@@ -7,7 +7,6 @@
     let urlOutput;
     
     let state = null;
-
     let isProcessing = false;
 
     function onInput() {
@@ -37,7 +36,7 @@
                 });
 
                 if (!response.ok) {
-                    const errorResponse = await response.json(); 
+                    const errorResponse = await response.text(); 
                     console.error(errorResponse.error);
                     state = 'failure';
                     return;

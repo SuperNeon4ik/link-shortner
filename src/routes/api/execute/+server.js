@@ -14,8 +14,9 @@ export async function POST({ request }) {
 
     var codeResponse = await generateTarget(target);
     if (codeResponse.error) {
+        console.error(codeResponse.error);
         error(500, {
-            message: codeResponse.error,
+            message: 'Internal Server Error',
             code: "INTERNAL_SERVER_ERROR"
         });
     }
