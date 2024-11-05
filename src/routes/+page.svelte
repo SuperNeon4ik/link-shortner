@@ -90,6 +90,7 @@
 
 <main>
     <form 
+        on:submit|preventDefault={() => onSubmit()}
         class:success={state == 'success'}
         class:failure={state == 'failure'}
         class:copy-failure={state == 'copy-failure'}>
@@ -103,8 +104,7 @@
         </div>
 
         <button 
-            class='output lexend-bold' 
-            on:click={() => onSubmit()}>
+            class='output lexend-bold'>
             <span>{data.domain}/</span>
             <div class="processing-box" class:active={isProcessing}>######</div>
             <span bind:this={urlOutput} class='output-code' class:active={!isProcessing}>######</span>
