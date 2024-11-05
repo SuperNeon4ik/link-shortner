@@ -5,21 +5,29 @@
 
     let urlInput;
     let urlOutput;
+    
+    let state = null;
 
     let isProcessing = false;
 
     function onInput() {
         if (urlInput.value.length == 1) {
-            urlInput.value = "https://" + urlInput.value;
+            urlInput.value = 'https://' + urlInput.value;
         }
+
+        urlOutput.innerText = '######';
+        state = null;
     }
 
     function onSubmit() {
         if (!validateUrl(urlInput.value)) {
+            state = 'failure';
             return;
         }
 
         isProcessing = true;
+        urlOutput.innerText = '######';
+        state = null;
 
         fetch('/api/execute', {
             method: "POST",
@@ -36,9 +44,12 @@
 
             const url = 'https://' + data.domain + "/" + code;
             await copyToClipboard(url);
+
+            state = "success";
         })
         .catch(error => {
             console.error(error);
+            state = 'failure';
         })
         .finally(() => {
             isProcessing = false;
@@ -49,8 +60,6 @@
         try {
             await navigator.clipboard.writeText(value);
         } catch (err) {
-            console.error('Failed to copy: ', err);
-
             const temp = document.createElement('input');
             document.body.appendChild(temp);
             temp.value = value;
@@ -62,7 +71,10 @@
 </script>
 
 <main>
-    <form on:submit|preventDefault={() => onSubmit()}>
+    <form 
+        on:submit|preventDefault={() => onSubmit()} 
+        class:success={state == 'success'}
+        class:failure={state == 'failure'}>
         <div class='inp-wrapper'>
             <input 
                 type='url' 
@@ -92,6 +104,8 @@
     }
 
     form {
+        position: relative;
+
         max-width: 35rem;
         width: 90%;
         text-wrap: wrap;
@@ -99,6 +113,40 @@
         border: #dadaee69 2px solid;
         border-radius: 0.5rem;
         padding: 1rem 1.5rem;
+
+        box-shadow: 0 0 0px 0px #64ec6463;
+
+        transition: border 1s cubic-bezier(0, 0.55, 0.45, 1);
+    }
+
+    form::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+
+        border-radius: 0.5rem;
+        z-index: -1;
+
+        transition: box-shadow 1s cubic-bezier(0, 0.55, 0.45, 1);
+    }
+
+    form.success {
+        border: #64ec64e8 2px solid;
+    }
+
+    form.success::before {
+        box-shadow: 0 0 20px 10px #64ec6463;
+    }
+
+    form.failure {
+        border: #ec6464e8 2px solid;
+    }
+
+    form.failure::before {
+        box-shadow: 0 0 20px 10px #ec646463;
     }
 
     form > * {
