@@ -3,22 +3,34 @@
 </script>
 
 <svelte:head>
-    <title>Neon's link shortner</title>
+    {#if data.branding.title}
+        <title>{data.branding.title}</title>
+    {/if}
 </svelte:head>
 
 <main>
-    <h3 id="title">Neon's Link Shortner</h3>
+    {#if data.branding.title}
+        <h3 id="title">{data.branding.title}</h3>
+    {/if}
 
     <slot />
 
     <footer>
-        <span>By <a href='https://superneon4ik.me' target="_blank">SuperNeon4ik</a></span>
-        <br>
+        {#if data.branding.author}
+            {#if data.branding.author_website}
+                <span>Hosted by <a href='{data.branding.author_website}' target="_blank">{data.branding.author}</a></span>
+            {:else}
+                <span>Hosted by {data.branding.author}</span>
+            {/if}
+            <br>
+        {/if}
         {#if data.git_url && data.branch && data.commit_sha}
             <span>{data.branch}@<a href='{data.git_url}/commit/{data.commit_sha}'>{data.commit_sha.substring(0, 7)}</a></span>
             <br>
         {/if}
-        <span><a href='mailto:personal@superneon4ik.me' target="_blank">Report abuse</a></span>
+        {#if data.branding.report_abuse_email}
+            <span><a href='mailto:{data.branding.report_abuse_email}' target="_blank">Report abuse</a></span>
+        {/if}
     </footer>
 </main>
 
