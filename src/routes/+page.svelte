@@ -29,52 +29,70 @@
         urlOutput.innerText = '######';
         state = null;
 
-        fetch('/api/execute', {
-            method: "POST",
-            body: urlInput.value
-        })
-        .then(async (response) => {
-            if (response.error) {
-                console.error(response.error);
-                return;
+        const generateCodePromise = async () => {
+            try {
+                const response = await fetch('/api/execute', {
+                    method: "POST",
+                    body: urlInput.value
+                });
+
+                if (!response.ok) {
+                    const errorResponse = await response.json(); 
+                    console.error(errorResponse.error);
+                    state = 'failure';
+                    return;
+                }
+
+                const code = await response.text();
+                urlOutput.innerText = code;
+
+                const url = 'https://' + data.domain + "/" + code;
+
+                state = "success";
+                return url;
+            } catch (error) {
+                console.error(error);
+                state = 'failure';
+                return null;
+            } finally {
+                isProcessing = false; 
             }
+        };
 
-            const code = await response.text();
-            urlOutput.innerText = code;
+        if (navigator.clipboard) {
+            const clipboardItem = new ClipboardItem({
+                'text/plain': generateCodePromise()
+            });
 
-            const url = 'https://' + data.domain + "/" + code;
-            await copyToClipboard(url);
+            navigator.clipboard
+                .write([ clipboardItem ])
+                .catch((err) => {
+                    console.error("Failed to write to clipboard", err);
+                    state = 'copy-failure';
+                });
+        }
+        else {
+            generateCodePromise()
+                .then((code) => {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = code;
+                    document.body.appendChild(textArea);
+                    textArea.select();
 
-            state = "success";
-        })
-        .catch(error => {
-            console.error(error);
-            state = 'failure';
-        })
-        .finally(() => {
-            isProcessing = false;
-        })
-    }
-
-    async function copyToClipboard(value) {
-        try {
-            await navigator.clipboard.writeText(value);
-        } catch (err) {
-            const temp = document.createElement('input');
-            document.body.appendChild(temp);
-            temp.value = value;
-            temp.select();
-            document.execCommand('copy');
-            document.body.removeChild(temp);
+                    const successful = document.execCommand('copy');
+                    console.log("Fallback: " + (successful ? 'Text copied to clipboard' : 'Failed to copy text'));
+                    if (!successful) state = 'copy-failure';
+                    document.body.removeChild(textArea);
+                });
         }
     }
 </script>
 
 <main>
     <form 
-        on:submit|preventDefault={() => onSubmit()} 
         class:success={state == 'success'}
-        class:failure={state == 'failure'}>
+        class:failure={state == 'failure'}
+        class:copy-failure={state == 'copy-failure'}>
         <div class='inp-wrapper'>
             <input 
                 type='url' 
@@ -147,6 +165,14 @@
 
     form.failure::before {
         box-shadow: 0 0 20px 10px #ec646463;
+    }
+
+    form.copy-failure {
+        border: #deec64e8 2px solid;
+    }
+
+    form.copy-failure::before {
+        box-shadow: 0 0 20px 10px #deec6463;
     }
 
     form > * {
