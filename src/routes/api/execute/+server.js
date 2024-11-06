@@ -12,7 +12,9 @@ export async function POST({ request }) {
         });
     }
 
-    var codeResponse = await generateTarget(target);
+    var reparsedUrl = new URL(target).toString();
+
+    var codeResponse = await generateTarget(reparsedUrl);
     if (codeResponse.error) {
         console.error(codeResponse.error);
         error(500, {
