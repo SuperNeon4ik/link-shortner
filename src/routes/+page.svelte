@@ -69,6 +69,12 @@
                     console.error("Failed to write to clipboard", err);
                     state = 'copy-failure';
                 });
+
+            // Hide keyboard
+            const focuseable = document.createElement('textarea');
+            document.body.appendChild(focuseable);
+            focuseable.focus();
+            document.body.removeChild(focuseable);
         }
         else {
             generateCodePromise()
