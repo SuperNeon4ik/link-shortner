@@ -66,8 +66,16 @@
             navigator.clipboard
                 .write([ clipboardItem ])
                 .catch((err) => {
-                    console.error("Failed to write to clipboard", err);
-                    state = 'copy-failure';
+                    console.warn("Failed to write to clipboard with Promise (probably a Chrome user, trying different method)", err);
+
+                    generateCodePromise()
+                        .then((code) => {
+                            navigator.clipboard.writeText(code)
+                                .catch((err) => {
+                                    console.error("Failed to write to clipboard", err);
+                                    state = 'copy-failure';
+                                });
+                        });
                 });
 
             // Hide keyboard
